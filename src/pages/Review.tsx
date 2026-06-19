@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { format } from 'date-fns'
-import { CheckCircle, XCircle, RotateCcw, Eye, X } from 'lucide-react'
+import { CheckCircle, XCircle, RotateCcw, Eye, X, AlertTriangle } from 'lucide-react'
 import type { ReviewItem } from '@/store'
 import { useStore } from '@/store'
 
@@ -12,6 +12,12 @@ const STATUS_MAP: Record<string, { label: string; badge: string }> = {
   rejected: { label: '已驳回', badge: 'badge-rejected' },
   remeasure: { label: '需复测', badge: 'badge-remeasure' },
   published: { label: '已发布', badge: 'badge-published' },
+}
+
+function isForceRemeasure(item: ReviewItem): boolean {
+  if (item.needRemeasure) return true
+  if (item.waterLevel && Math.abs(item.waterLevel.changeRate) > 0.5) return true
+  return false
 }
 
 export default function Review() {
@@ -73,22 +79,36 @@ export default function Review() {
               )}
               {reviewList.map((item) => {
                 const statusInfo = STATUS_MAP[item.status] ?? { label: item.status, badge: 'badge-draft' }
+                const forceRemeasure = isForceRemeasure(item)
                 return (
-                  <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50 cursor-pointer" onClick={() => setSelectedItem(item)}>
+                  <tr key={item.id} className={`border-b border-slate-100 hover:bg-slate-50 cursor-pointer ${forceRemeasure ? 'bg-warning-50/30' : ''}`} onClick={() => setSelectedItem(item)}>
                     <td className="py-3 px-4 text-slate-700">{item.sectionName}</td>
                     <td className="py-3 px-4 text-slate-700">{format(new Date(item.measureDate), 'yyyy-MM-dd')}</td>
                     <td className="py-3 px-4 text-slate-700">{item.method === 'point_integration' ? '积点法' : '积深法'}</td>
-                    <td className="py-3 px-4 text-slate-700">
+                    <td className="py-3 px-4">
                       {item.waterLevel ? (
-                        <span className={item.waterLevel.changeRate > 0.5 ? 'text-warning font-semibold' : ''}>
+                        <span className={`inline-flex items-center gap-1 ${Math.abs(item.waterLevel.changeRate) > 0.5 ? 'text-warning font-semibold' : 'text-slate-700'}`}>
+                          {Math.abs(item.waterLevel.changeRate) > 0.5 && <AlertTriangle className="w-3.5 h-3.5" />}
                           {item.waterLevel.changeRate}
                         </span>
                       ) : '-'}
                     </td>
-                    <td className="py-3 px-4"><span className={statusInfo.badge}>{statusInfo.label}</span></td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <span className={statusInfo.badge}>{statusInfo.label}</span>
+                        {forceRemeasure && <span className="badge-remeasure text-xs">需复测</span>}
+                      </div>
+                    </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => { setSelectedItem(item); setConfirmAction('approve') }} className="p-1.5 rounded hover:bg-emerald-50 text-emerald-600" title="通过"><CheckCircle className="w-4 h-4" /></button>
+                        <button
+                          onClick={() => { setSelectedItem(item); setConfirmAction('approve') }}
+                          disabled={forceRemeasure}
+                          className={`p-1.5 rounded ${forceRemeasure ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-emerald-50 text-emerald-600'}`}
+                          title={forceRemeasure ? '水位变化过快，需走复测流程' : '通过'}
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                        </button>
                         <button onClick={() => { setSelectedItem(item); setConfirmAction('reject') }} className="p-1.5 rounded hover:bg-slate-100 text-slate-500" title="驳回"><XCircle className="w-4 h-4" /></button>
                         <button onClick={() => { setSelectedItem(item); setConfirmAction('remeasure') }} className="p-1.5 rounded hover:bg-amber-50 text-amber-600" title="复测"><RotateCcw className="w-4 h-4" /></button>
                       </div>
@@ -146,7 +166,17 @@ export default function Review() {
                     <div>始水位：{selectedItem.waterLevel.startLevel}m</div>
                     <div>终水位：{selectedItem.waterLevel.endLevel}m</div>
                     <div>平均：{selectedItem.waterLevel.avgLevel}m</div>
-                    <div>变化率：<span className={selectedItem.waterLevel.changeRate > 0.5 ? 'text-warning font-semibold' : ''}>{selectedItem.waterLevel.changeRate}m/h</span></div>
+                    <div>变化率：<span className={Math.abs(selectedItem.waterLevel.changeRate) > 0.5 ? 'text-warning font-semibold' : ''}>{selectedItem.waterLevel.changeRate}m/h</span></div>
+                  </div>
+                </div>
+              )}
+              {isForceRemeasure(selectedItem) && (
+                <div className="bg-warning-50 border border-warning-200 rounded-lg p-3 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+                  <div className="text-xs text-warning-700">
+                    <p className="font-medium">该测次需走复测流程</p>
+                    <p className="mt-0.5">{selectedItem.needRemeasure ? '已标记需要复测' : '水位变化率超过 0.5m/h 阈值'}</p>
+                    <p className="mt-0.5">不得直接审核通过，请使用"复测"操作</p>
                   </div>
                 </div>
               )}
@@ -182,7 +212,11 @@ export default function Review() {
             <div className="flex justify-end gap-3">
               <button onClick={() => setConfirmAction(null)} className="btn-secondary">取消</button>
               {confirmAction === 'approve' && (
-                <button onClick={() => handleAction(() => approveMeasurement(selectedItem.id, comment))} disabled={actionLoading} className="btn-success flex items-center gap-1.5">
+                <button
+                  onClick={() => handleAction(() => approveMeasurement(selectedItem.id, comment))}
+                  disabled={actionLoading || isForceRemeasure(selectedItem)}
+                  className="btn-success flex items-center gap-1.5"
+                >
                   <CheckCircle className="w-4 h-4" /> {actionLoading ? '处理中...' : '确认通过'}
                 </button>
               )}

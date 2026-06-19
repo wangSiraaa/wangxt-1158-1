@@ -34,6 +34,20 @@ router.post('/:id/approve', async (req: Request, res: Response): Promise<void> =
       res.status(400).json({ success: false, error: '仅已提交的记录可以审核通过' })
       return
     }
+
+    const wl = store.waterLevels.find((w: WaterLevel) => w.measurementId === measurement.id)
+    const changeRateAbs = wl ? Math.abs(wl.changeRate) : 0
+    if (measurement.needRemeasure || changeRateAbs > 0.5) {
+      const reason = measurement.needRemeasure
+        ? '该测次已标记为需要复测'
+        : `水位变化率 ${wl?.changeRate}m/h 超过 0.5m/h 阈值`
+      res.status(400).json({
+        success: false,
+        error: `${reason}，不得直接审核通过，请走复测流程`,
+      })
+      return
+    }
+
     const now = new Date().toISOString()
     const { operator = '审核员', operatorRole = 'reviewer', comment } = req.body
     measurement.status = 'approved'
