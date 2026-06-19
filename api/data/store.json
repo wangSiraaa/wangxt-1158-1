@@ -1,0 +1,363 @@
+{
+  "sections": [
+    {
+      "id": "6caa1068-4962-4d02-a4dc-7d6299d81277",
+      "name": "望江楼断面",
+      "code": "WJL-001",
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "094dbd0e-e464-406e-83ac-7afe1ec80423",
+      "name": "镇江关断面",
+      "code": "ZJG-002",
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "9b0d50f4-4c98-431d-92b7-84a7d24891c8",
+      "name": "青神断面",
+      "code": "QS-003",
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    }
+  ],
+  "measurements": [
+    {
+      "id": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "sectionId": "6caa1068-4962-4d02-a4dc-7d6299d81277",
+      "measureDate": "2026-06-17",
+      "weather": "晴",
+      "method": "point_integration",
+      "status": "published",
+      "needRemeasure": false,
+      "remeasureFromId": null,
+      "remeasureReason": null,
+      "createdAt": "2026-06-19T00:55:26.320Z",
+      "updatedAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "dd827a1a-1531-4fd0-9edd-b8d226297615",
+      "sectionId": "094dbd0e-e464-406e-83ac-7afe1ec80423",
+      "measureDate": "2026-06-18",
+      "weather": "多云",
+      "method": "depth_integration",
+      "status": "submitted",
+      "needRemeasure": false,
+      "remeasureFromId": null,
+      "remeasureReason": null,
+      "createdAt": "2026-06-19T00:55:26.320Z",
+      "updatedAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "88c9275a-9f0b-4b6e-9f23-22c7f02a4755",
+      "sectionId": "6caa1068-4962-4d02-a4dc-7d6299d81277",
+      "measureDate": "2026-06-18",
+      "weather": "阴",
+      "method": "point_integration",
+      "status": "approved",
+      "needRemeasure": false,
+      "remeasureFromId": null,
+      "remeasureReason": null,
+      "createdAt": "2026-06-19T00:55:26.320Z",
+      "updatedAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "3a5a39af-69a1-4011-b267-b2f7ef7b8f28",
+      "sectionId": "6caa1068-4962-4d02-a4dc-7d6299d81277",
+      "measureDate": "2026-06-19",
+      "weather": "修改天气测试",
+      "method": "point_integration",
+      "status": "draft",
+      "needRemeasure": false,
+      "remeasureFromId": null,
+      "remeasureReason": null,
+      "createdAt": "2026-06-19T00:55:26.320Z",
+      "updatedAt": "2026-06-19T01:18:07.555Z"
+    },
+    {
+      "id": "f63bd95d-454d-46af-b974-c536c2b6e295",
+      "sectionId": "6caa1068-4962-4d02-a4dc-7d6299d81277",
+      "measureDate": "2026-06-19",
+      "weather": "晴",
+      "method": "point_integration",
+      "status": "submitted",
+      "needRemeasure": true,
+      "remeasureFromId": null,
+      "remeasureReason": null,
+      "createdAt": "2026-06-19T01:35:08.026Z",
+      "updatedAt": "2026-06-19T01:35:08.035Z"
+    },
+    {
+      "id": "20c35921-d57e-4800-a159-e1c33a599893",
+      "sectionId": "6caa1068-4962-4d02-a4dc-7d6299d81277",
+      "measureDate": "2026-06-25",
+      "weather": "复核验收",
+      "method": "point_integration",
+      "status": "approved",
+      "needRemeasure": true,
+      "remeasureFromId": null,
+      "remeasureReason": null,
+      "createdAt": "2026-06-19T01:36:28.087Z",
+      "updatedAt": "2026-06-19T01:36:31.384Z"
+    }
+  ],
+  "velocityPoints": [
+    {
+      "id": "3ebae447-b63d-4e7b-a97b-ae34a8313e96",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "pointNo": 1,
+      "startDistance": 10,
+      "waterDepth": 2.5,
+      "velocity": 1.23,
+      "isMissing": false
+    },
+    {
+      "id": "4667a64a-e911-4fa1-b74d-acb11e570de6",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "pointNo": 2,
+      "startDistance": 20,
+      "waterDepth": 3,
+      "velocity": 1.45,
+      "isMissing": false
+    },
+    {
+      "id": "2ea50943-a5e3-424c-929e-ad51a7bc76f6",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "pointNo": 3,
+      "startDistance": 30,
+      "waterDepth": 2.8,
+      "velocity": 1.32,
+      "isMissing": false
+    },
+    {
+      "id": "3e6240b7-d831-40ba-9d29-f4ba302f9625",
+      "measurementId": "dd827a1a-1531-4fd0-9edd-b8d226297615",
+      "pointNo": 1,
+      "startDistance": 5,
+      "waterDepth": 1.8,
+      "velocity": 0.95,
+      "isMissing": false
+    },
+    {
+      "id": "7d097cf9-d188-4159-9b23-5892cb899e75",
+      "measurementId": "dd827a1a-1531-4fd0-9edd-b8d226297615",
+      "pointNo": 2,
+      "startDistance": 15,
+      "waterDepth": 2.2,
+      "velocity": 1.1,
+      "isMissing": false
+    },
+    {
+      "id": "e9fbd6ef-3f42-47b7-80f9-ddd651a34496",
+      "measurementId": "dd827a1a-1531-4fd0-9edd-b8d226297615",
+      "pointNo": 3,
+      "startDistance": 25,
+      "waterDepth": 2,
+      "velocity": null,
+      "isMissing": true
+    },
+    {
+      "id": "b59e08b9-3bde-4a6d-89bd-72329d3aed16",
+      "measurementId": "88c9275a-9f0b-4b6e-9f23-22c7f02a4755",
+      "pointNo": 1,
+      "startDistance": 10,
+      "waterDepth": 2.3,
+      "velocity": 1.15,
+      "isMissing": false
+    },
+    {
+      "id": "5abd6d30-15d8-41bb-a540-fd839fd90c61",
+      "measurementId": "88c9275a-9f0b-4b6e-9f23-22c7f02a4755",
+      "pointNo": 2,
+      "startDistance": 20,
+      "waterDepth": 2.7,
+      "velocity": 1.38,
+      "isMissing": false
+    },
+    {
+      "id": "f39fc0d7-7c3a-41cf-8642-e4ef2264ad8f",
+      "measurementId": "3a5a39af-69a1-4011-b267-b2f7ef7b8f28",
+      "pointNo": 1,
+      "startDistance": 10,
+      "waterDepth": 2.5,
+      "velocity": 1.2,
+      "isMissing": false
+    },
+    {
+      "id": "03a1063f-f77b-4d30-82a1-468dd7a16a70",
+      "measurementId": "3a5a39af-69a1-4011-b267-b2f7ef7b8f28",
+      "pointNo": 2,
+      "startDistance": 20,
+      "waterDepth": 3,
+      "velocity": null,
+      "isMissing": true
+    },
+    {
+      "id": "8a4becf8-b67d-4ecf-a3c6-082344d98df9",
+      "measurementId": "f63bd95d-454d-46af-b974-c536c2b6e295",
+      "pointNo": 1,
+      "startDistance": 10,
+      "waterDepth": 2.2,
+      "velocity": 1.2,
+      "isMissing": false
+    },
+    {
+      "id": "382fe5bf-5a0d-49f4-89a4-97638aa49353",
+      "measurementId": "20c35921-d57e-4800-a159-e1c33a599893",
+      "pointNo": 1,
+      "startDistance": 10,
+      "waterDepth": 2.2,
+      "velocity": 1.2,
+      "isMissing": false
+    },
+    {
+      "id": "8ed85304-0e4b-403c-bad2-260137ac2b45",
+      "measurementId": "20c35921-d57e-4800-a159-e1c33a599893",
+      "pointNo": 2,
+      "startDistance": 20,
+      "waterDepth": 2.5,
+      "velocity": 1.3,
+      "isMissing": false
+    }
+  ],
+  "waterLevels": [
+    {
+      "id": "ac8c6f6c-e056-4075-a071-987798e8aa0d",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "startLevel": 45.2,
+      "endLevel": 45.18,
+      "avgLevel": 45.19,
+      "changeRate": 0.02
+    },
+    {
+      "id": "bf72971c-0245-41f7-877b-3012f7a90d79",
+      "measurementId": "dd827a1a-1531-4fd0-9edd-b8d226297615",
+      "startLevel": 38.5,
+      "endLevel": 38.1,
+      "avgLevel": 38.3,
+      "changeRate": 0.4
+    },
+    {
+      "id": "00155192-d4ab-4830-993f-6887a11b144d",
+      "measurementId": "88c9275a-9f0b-4b6e-9f23-22c7f02a4755",
+      "startLevel": 45.3,
+      "endLevel": 45.25,
+      "avgLevel": 45.275,
+      "changeRate": 0.05
+    },
+    {
+      "id": "1bd61bc2-4f6e-4f13-945f-ab18b1a030fc",
+      "measurementId": "3a5a39af-69a1-4011-b267-b2f7ef7b8f28",
+      "startLevel": 45.1,
+      "endLevel": 44.5,
+      "avgLevel": 44.8,
+      "changeRate": 0.6
+    },
+    {
+      "id": "16ea9f22-13a4-42f9-a753-34aa2af30f38",
+      "measurementId": "f63bd95d-454d-46af-b974-c536c2b6e295",
+      "startLevel": 45,
+      "endLevel": 44.3,
+      "avgLevel": 44.65,
+      "changeRate": 0.7
+    },
+    {
+      "id": "3b81dad1-004f-4e63-9546-890e7d7b4f55",
+      "measurementId": "20c35921-d57e-4800-a159-e1c33a599893",
+      "startLevel": 45,
+      "endLevel": 44.1,
+      "avgLevel": 44.55,
+      "changeRate": 0.9
+    }
+  ],
+  "auditTrails": [
+    {
+      "id": "4ad60661-2a89-45d2-906d-34495c1ea51c",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "action": "submit",
+      "operator": "张三",
+      "operatorRole": "station",
+      "comment": null,
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "61f1a480-7398-439d-b718-81cd180bf761",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "action": "approve",
+      "operator": "李四",
+      "operatorRole": "reviewer",
+      "comment": "数据合格",
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "7aae2f66-b5c7-4752-a13a-c646e8713494",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "action": "publish",
+      "operator": "王五",
+      "operatorRole": "duty",
+      "comment": null,
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "e2351797-bf90-4e53-b431-029d6f38650f",
+      "measurementId": "dd827a1a-1531-4fd0-9edd-b8d226297615",
+      "action": "submit",
+      "operator": "张三",
+      "operatorRole": "station",
+      "comment": null,
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "8f9a3a6b-0256-40b9-8731-ac1748439846",
+      "measurementId": "88c9275a-9f0b-4b6e-9f23-22c7f02a4755",
+      "action": "submit",
+      "operator": "赵六",
+      "operatorRole": "station",
+      "comment": null,
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "508f5d89-538d-457d-a511-c470494defc4",
+      "measurementId": "88c9275a-9f0b-4b6e-9f23-22c7f02a4755",
+      "action": "approve",
+      "operator": "李四",
+      "operatorRole": "reviewer",
+      "comment": "审核通过",
+      "createdAt": "2026-06-19T00:55:26.320Z"
+    },
+    {
+      "id": "c7630ef9-eab2-406d-aeaa-75f72035027c",
+      "measurementId": "f63bd95d-454d-46af-b974-c536c2b6e295",
+      "action": "submit",
+      "operator": "测站人员",
+      "operatorRole": "station",
+      "comment": null,
+      "createdAt": "2026-06-19T01:35:08.035Z"
+    },
+    {
+      "id": "1cecb30a-de03-4621-9e3e-67f06e356abb",
+      "measurementId": "20c35921-d57e-4800-a159-e1c33a599893",
+      "action": "submit",
+      "operator": "测站人员",
+      "operatorRole": "station",
+      "comment": null,
+      "createdAt": "2026-06-19T01:36:28.097Z"
+    },
+    {
+      "id": "3d29e9d0-10c3-4d4f-ad4d-61e519120b08",
+      "measurementId": "20c35921-d57e-4800-a159-e1c33a599893",
+      "action": "approve",
+      "operator": "测站人员",
+      "operatorRole": "station",
+      "comment": null,
+      "createdAt": "2026-06-19T01:36:31.384Z"
+    }
+  ],
+  "publishRecords": [
+    {
+      "id": "66483358-37cb-4a42-9ca2-01a9566cbce4",
+      "measurementId": "ee9854a8-d737-4736-a53d-8ed83185d5d4",
+      "publishedBy": "王五",
+      "publishedAt": "2026-06-19T00:55:26.320Z",
+      "dataSnapshot": "{\"measurement\":{\"id\":\"ee9854a8-d737-4736-a53d-8ed83185d5d4\",\"sectionId\":\"6caa1068-4962-4d02-a4dc-7d6299d81277\",\"measureDate\":\"2026-06-17\",\"weather\":\"晴\",\"method\":\"point_integration\",\"status\":\"published\",\"needRemeasure\":false,\"remeasureFromId\":null,\"remeasureReason\":null,\"createdAt\":\"2026-06-19T00:55:26.320Z\",\"updatedAt\":\"2026-06-19T00:55:26.320Z\"},\"velocityPoints\":[{\"id\":\"3ebae447-b63d-4e7b-a97b-ae34a8313e96\",\"measurementId\":\"ee9854a8-d737-4736-a53d-8ed83185d5d4\",\"pointNo\":1,\"startDistance\":10,\"waterDepth\":2.5,\"velocity\":1.23,\"isMissing\":false},{\"id\":\"4667a64a-e911-4fa1-b74d-acb11e570de6\",\"measurementId\":\"ee9854a8-d737-4736-a53d-8ed83185d5d4\",\"pointNo\":2,\"startDistance\":20,\"waterDepth\":3,\"velocity\":1.45,\"isMissing\":false},{\"id\":\"2ea50943-a5e3-424c-929e-ad51a7bc76f6\",\"measurementId\":\"ee9854a8-d737-4736-a53d-8ed83185d5d4\",\"pointNo\":3,\"startDistance\":30,\"waterDepth\":2.8,\"velocity\":1.32,\"isMissing\":false}],\"waterLevel\":{\"id\":\"ac8c6f6c-e056-4075-a071-987798e8aa0d\",\"measurementId\":\"ee9854a8-d737-4736-a53d-8ed83185d5d4\",\"startLevel\":45.2,\"endLevel\":45.18,\"avgLevel\":45.19,\"changeRate\":0.02}}"
+    }
+  ]
+}

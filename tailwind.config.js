@@ -1,0 +1,68 @@
+/** @type {import('tailwindcss').Config} */
+
+export default {
+  darkMode: "class",
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    container: {
+      center: true,
+    },
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#0C4A6E',
+          50: '#E0F2FE',
+          100: '#BAE6FD',
+          200: '#7DD3FC',
+          300: '#38BDF8',
+          400: '#0EA5E9',
+          500: '#0C4A6E',
+          600: '#0A3D5C',
+          700: '#083049',
+          800: '#062337',
+          900: '#041624',
+        },
+        secondary: {
+          DEFAULT: '#06B6D4',
+          50: '#ECFEFF',
+          100: '#CFFAFE',
+          200: '#A5F3FC',
+          300: '#67E8F9',
+          400: '#22D3EE',
+          500: '#06B6D4',
+          600: '#0891B2',
+          700: '#0E7490',
+          800: '#155E75',
+          900: '#164E63',
+        },
+        warning: {
+          DEFAULT: '#F59E0B',
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#F59E0B',
+          600: '#D97706',
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
+        },
+        danger: {
+          DEFAULT: '#EF4444',
+          50: '#FEF2F2',
+          100: '#FEE2E2',
+          200: '#FECACA',
+          300: '#FCA5A5',
+          400: '#F87171',
+          500: '#EF4444',
+          600: '#DC2626',
+          700: '#B91C1C',
+          800: '#991B1B',
+          900: '#7F1D1D',
+        },
+      },
+    },
+  },
+  plugins: [],
+};
