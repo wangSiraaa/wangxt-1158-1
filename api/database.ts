@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { v4 as uuidv4 } from 'uuid'
-import type { StoreData, Section, Measurement, VelocityPoint, WaterLevel, AuditTrail, PublishRecord } from '../shared/types.js'
+import type { StoreData, Section, Measurement, VelocityPoint, WaterLevel, AuditTrail, PublishRecord, CorrectionNote } from '../shared/types.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -35,6 +35,7 @@ function getDefaultStore(): StoreData {
       method: 'point_integration',
       status: 'published',
       needRemeasure: false,
+      pendingVerification: false,
       remeasureFromId: null,
       remeasureReason: null,
       createdAt: now,
@@ -48,6 +49,7 @@ function getDefaultStore(): StoreData {
       method: 'depth_integration',
       status: 'submitted',
       needRemeasure: false,
+      pendingVerification: false,
       remeasureFromId: null,
       remeasureReason: null,
       createdAt: now,
@@ -61,6 +63,7 @@ function getDefaultStore(): StoreData {
       method: 'point_integration',
       status: 'approved',
       needRemeasure: false,
+      pendingVerification: false,
       remeasureFromId: null,
       remeasureReason: null,
       createdAt: now,
@@ -74,6 +77,7 @@ function getDefaultStore(): StoreData {
       method: 'point_integration',
       status: 'draft',
       needRemeasure: false,
+      pendingVerification: false,
       remeasureFromId: null,
       remeasureReason: null,
       createdAt: now,
@@ -120,7 +124,9 @@ function getDefaultStore(): StoreData {
     },
   ]
 
-  return { sections, measurements, velocityPoints, waterLevels, auditTrails, publishRecords }
+  const correctionNotes: CorrectionNote[] = []
+
+  return { sections, measurements, velocityPoints, waterLevels, auditTrails, publishRecords, correctionNotes }
 }
 
 let storeCache: StoreData | null = null

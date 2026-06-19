@@ -52,6 +52,14 @@ router.post('/:id/approve', async (req: Request, res: Response): Promise<void> =
     const { operator = '审核员', operatorRole = 'reviewer', comment } = req.body
     measurement.status = 'approved'
     measurement.updatedAt = now
+    if (measurement.remeasureFromId) {
+      measurement.pendingVerification = false
+      const origIdx = store.measurements.findIndex((m: Measurement) => m.id === measurement.remeasureFromId)
+      if (origIdx !== -1) {
+        store.measurements[origIdx].pendingVerification = false
+        store.measurements[origIdx].updatedAt = now
+      }
+    }
     store.measurements[idx] = measurement
     const audit: AuditTrail = {
       id: genId(),
@@ -122,6 +130,7 @@ router.post('/:id/remeasure', async (req: Request, res: Response): Promise<void>
     const { operator = '审核员', operatorRole = 'reviewer', comment, remeasureReason } = req.body
 
     measurement.status = 'remeasure'
+    measurement.pendingVerification = true
     measurement.updatedAt = now
     store.measurements[idx] = measurement
 
@@ -134,6 +143,7 @@ router.post('/:id/remeasure', async (req: Request, res: Response): Promise<void>
       method: measurement.method,
       status: 'draft',
       needRemeasure: false,
+      pendingVerification: false,
       remeasureFromId: measurement.id,
       remeasureReason: remeasureReason || comment || null,
       createdAt: now,

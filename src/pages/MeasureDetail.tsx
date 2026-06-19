@@ -4,8 +4,9 @@ import { format } from 'date-fns'
 import {
   AlertTriangle, Edit, Send, CheckCircle, XCircle,
   RotateCcw, Lock, FileText, ArrowUpRight, ThumbsUp, ThumbsDown,
+  Plus, X, MessageSquare, Eye, GitBranch,
 } from 'lucide-react'
-import type { AuditTrail } from '../../shared/types'
+import type { AuditTrail, CorrectionNote } from '../../shared/types'
 import { useStore } from '@/store'
 
 const STATUS_MAP: Record<string, { label: string; badge: string }> = {
@@ -23,6 +24,8 @@ const ACTION_ICONS: Record<string, typeof Send> = {
   reject: ThumbsDown,
   remeasure: RotateCcw,
   publish: ArrowUpRight,
+  add_correction: MessageSquare,
+  mark_pending_verification: AlertTriangle,
 }
 
 const ACTION_LABELS: Record<string, string> = {
@@ -31,6 +34,8 @@ const ACTION_LABELS: Record<string, string> = {
   reject: '驳回',
   remeasure: '要求复测',
   publish: '发布',
+  add_correction: '追加更正',
+  mark_pending_verification: '标记待核',
 }
 
 export default function MeasureDetail() {
@@ -39,8 +44,12 @@ export default function MeasureDetail() {
   const {
     currentMeasurement, sections, role, loading,
     fetchMeasurementDetail, submitMeasurement, clearCurrentMeasurement,
+    addCorrectionNote,
   } = useStore()
   const [actionLoading, setActionLoading] = useState(false)
+  const [showCorrectionModal, setShowCorrectionModal] = useState(false)
+  const [correctionContent, setCorrectionContent] = useState('')
+  const [correctionLoading, setCorrectionLoading] = useState(false)
 
   useEffect(() => {
     if (id) fetchMeasurementDetail(id)
@@ -59,6 +68,7 @@ export default function MeasureDetail() {
   const canSubmit = ['draft', 'rejected'].includes(m.status) && role === 'station'
   const canReview = m.status === 'submitted' && role === 'reviewer'
   const canPublish = m.status === 'approved' && role === 'duty'
+  const canAddCorrection = m.status === 'published' && (role === 'duty' || role === 'reviewer')
 
   const handleAction = async (action: () => Promise<void>) => {
     setActionLoading(true)
@@ -66,24 +76,91 @@ export default function MeasureDetail() {
       await action()
       if (id) fetchMeasurementDetail(id)
     } catch {
-      // error handled in store
     } finally {
       setActionLoading(false)
     }
   }
 
+  const handleAddCorrection = async () => {
+    if (!correctionContent.trim()) return
+    if (!id) return
+    setCorrectionLoading(true)
+    try {
+      await addCorrectionNote(id, correctionContent.trim())
+      setShowCorrectionModal(false)
+      setCorrectionContent('')
+      fetchMeasurementDetail(id)
+    } catch {
+    } finally {
+      setCorrectionLoading(false)
+    }
+  }
+
   return (
-    <div className="max-w-4xl mx-auto space-y-5">
+    <div className="max-w-5xl mx-auto space-y-5">
+      {m.chain && m.chain.length > 1 && (
+        <div className="card">
+          <div className="flex items-center gap-2 mb-4">
+            <GitBranch className="w-4 h-4 text-slate-500" />
+            <h3 className="text-base font-semibold text-slate-800">测次链路</h3>
+          </div>
+          <div className="flex items-center flex-wrap gap-2">
+            {m.chain.map((link, idx) => {
+              const isCurrent = link.id === m.id
+              const linkStatus = STATUS_MAP[link.status] ?? { label: link.status, badge: 'badge-draft' }
+              return (
+                <div key={link.id} className="flex items-center gap-2">
+                  <div
+                    onClick={() => !isCurrent && navigate(`/measure/${link.id}`)}
+                    className={`px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                      isCurrent
+                        ? 'bg-secondary/10 border-secondary text-secondary font-medium'
+                        : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {link.isRemeasure && <RotateCcw className="w-3.5 h-3.5 text-amber-500" />}
+                      <span className="text-slate-700">
+                        {format(new Date(link.measureDate), 'MM-dd')}
+                        {link.isRemeasure && '（复测）'}
+                      </span>
+                      <span className={linkStatus.badge}>{linkStatus.label}</span>
+                      {isCurrent && <Eye className="w-3.5 h-3.5 text-secondary" />}
+                    </div>
+                  </div>
+                  {idx < m.chain.length - 1 && (
+                    <ArrowUpRight className="w-4 h-4 text-slate-300 shrink-0 -rotate-45" />
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-semibold text-slate-800">基本信息</h3>
-          <span className={statusInfo.badge}>{statusInfo.label}</span>
+          <div className="flex items-center gap-2">
+            {m.pendingVerification && (
+              <span className="badge-warning flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" /> 待核
+              </span>
+            )}
+            <span className={statusInfo.badge}>{statusInfo.label}</span>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm">
           <div><span className="text-slate-500">断面：</span><span className="text-slate-800">{sectionName}</span></div>
           <div><span className="text-slate-500">施测日期：</span><span className="text-slate-800">{format(new Date(m.measureDate), 'yyyy-MM-dd')}</span></div>
           <div><span className="text-slate-500">天气：</span><span className="text-slate-800">{m.weather || '-'}</span></div>
           <div><span className="text-slate-500">测法：</span><span className="text-slate-800">{m.method === 'point_integration' ? '积点法' : '积深法'}</span></div>
+          {m.remeasureFromId && (
+            <div className="col-span-2">
+              <span className="text-slate-500">复测原因：</span>
+              <span className="text-amber-600 font-medium">{m.remeasureReason}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -143,29 +220,86 @@ export default function MeasureDetail() {
         )}
       </div>
 
+      {m.correctionNotes && m.correctionNotes.length > 0 && (
+        <div className="card">
+          <div className="flex items-center gap-2 mb-4">
+            <MessageSquare className="w-4 h-4 text-slate-500" />
+            <h3 className="text-base font-semibold text-slate-800">更正说明</h3>
+          </div>
+          <div className="space-y-3">
+            {m.correctionNotes.map((note: CorrectionNote) => (
+              <div key={note.id} className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2 text-sm">
+                  <span className="font-medium text-slate-700">{note.operator}</span>
+                  <span className="text-slate-400">·</span>
+                  <span className="text-slate-500 text-xs">
+                    {note.operatorRole === 'duty' ? '值班员' : note.operatorRole === 'reviewer' ? '复核员' : '测站人员'}
+                  </span>
+                  <span className="text-slate-400">·</span>
+                  <span className="text-slate-400 text-xs">{format(new Date(note.createdAt), 'yyyy-MM-dd HH:mm')}</span>
+                </div>
+                <p className="text-sm text-slate-700 whitespace-pre-wrap">{note.content}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {m.auditTrails.length > 0 && (
         <div className="card">
-          <h3 className="text-base font-semibold text-slate-800 mb-4">审核记录</h3>
+          <h3 className="text-base font-semibold text-slate-800 mb-4">操作记录</h3>
           <div className="relative pl-6">
             <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-slate-200" />
             <div className="space-y-4">
               {m.auditTrails.map((trail: AuditTrail) => {
                 const Icon = ACTION_ICONS[trail.action] ?? FileText
+                const isCorrection = trail.action === 'add_correction'
+                const isPendingVerify = trail.action === 'mark_pending_verification'
                 return (
                   <div key={trail.id} className="relative flex items-start gap-3">
-                    <div className="absolute -left-[18px] w-7 h-7 rounded-full bg-white border-2 border-secondary flex items-center justify-center z-10">
-                      <Icon className="w-3.5 h-3.5 text-secondary" />
+                    <div
+                      className={`absolute -left-[18px] w-7 h-7 rounded-full bg-white border-2 flex items-center justify-center z-10 ${
+                        isCorrection
+                          ? 'border-amber-400'
+                          : isPendingVerify
+                            ? 'border-warning'
+                            : 'border-secondary'
+                      }`}
+                    >
+                      <Icon
+                        className={`w-3.5 h-3.5 ${
+                          isCorrection
+                            ? 'text-amber-500'
+                            : isPendingVerify
+                              ? 'text-warning'
+                              : 'text-secondary'
+                        }`}
+                      />
                     </div>
                     <div className="flex-1 pt-0.5">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium text-slate-700">{ACTION_LABELS[trail.action] ?? trail.action}</span>
+                        <span
+                          className={`font-medium ${
+                            isCorrection
+                              ? 'text-amber-700'
+                              : isPendingVerify
+                                ? 'text-warning-700'
+                                : 'text-slate-700'
+                          }`}
+                        >
+                          {ACTION_LABELS[trail.action] ?? trail.action}
+                        </span>
                         <span className="text-slate-400">·</span>
                         <span className="text-slate-500">{trail.operator}</span>
                         <span className="text-slate-400">·</span>
                         <span className="text-slate-400 text-xs">{format(new Date(trail.createdAt), 'yyyy-MM-dd HH:mm')}</span>
                       </div>
                       {trail.comment && (
-                        <p className="text-sm text-slate-600 mt-1">{trail.comment}</p>
+                        <p className={`text-sm mt-1 ${
+                          isCorrection ? 'text-amber-700' : 'text-slate-600'
+                        }`}>
+                          {trail.comment}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -178,9 +312,19 @@ export default function MeasureDetail() {
 
       <div className="flex justify-end gap-3 pb-6">
         {m.status === 'published' && (
-          <div className="flex items-center gap-2 text-purple-600 text-sm">
-            <Lock className="w-4 h-4" /> 已发布，不可编辑
-          </div>
+          <>
+            <div className="flex items-center gap-2 text-purple-600 text-sm mr-auto">
+              <Lock className="w-4 h-4" /> 已发布，原始读数不可修改
+            </div>
+            {canAddCorrection && (
+              <button
+                onClick={() => setShowCorrectionModal(true)}
+                className="btn-warning flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" /> 追加更正说明
+              </button>
+            )}
+          </>
         )}
         {canEdit && (
           <button onClick={() => navigate(`/measure/edit/${m.id}`)} className="btn-secondary flex items-center gap-1.5">
@@ -215,6 +359,46 @@ export default function MeasureDetail() {
           </button>
         )}
       </div>
+
+      {showCorrectionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30" onClick={() => setShowCorrectionModal(false)} />
+          <div className="relative bg-white rounded-lg shadow-xl w-[480px] p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-slate-800">追加更正说明</h3>
+              <button onClick={() => setShowCorrectionModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-4 flex items-start gap-2">
+              <Lock className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
+              <span className="text-xs text-purple-700">
+                已发布数据的原始读数不可修改。更正说明将作为补充记录追加，不影响原始数据。
+              </span>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm text-slate-600 mb-1">更正内容 <span className="text-danger">*</span></label>
+              <textarea
+                className="input-field"
+                rows={4}
+                value={correctionContent}
+                onChange={(e) => setCorrectionContent(e.target.value)}
+                placeholder="请输入更正说明内容..."
+              />
+            </div>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowCorrectionModal(false)} className="btn-secondary">取消</button>
+              <button
+                onClick={handleAddCorrection}
+                disabled={!correctionContent.trim() || correctionLoading}
+                className="btn-warning flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" /> {correctionLoading ? '提交中...' : '确认追加'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

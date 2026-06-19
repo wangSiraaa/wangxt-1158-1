@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { Lock, Send, X, AlertTriangle } from 'lucide-react'
+import { Lock, Send, X, AlertTriangle, MessageSquare } from 'lucide-react'
 import type { PublishItem } from '@/store'
 import { useStore } from '@/store'
 
@@ -81,16 +81,26 @@ export default function Publish() {
           <th className="text-left py-3 px-4 text-slate-500 font-medium">平均水位</th>
           <th className="text-left py-3 px-4 text-slate-500 font-medium">发布时间</th>
           <th className="text-left py-3 px-4 text-slate-500 font-medium">发布人</th>
+          <th className="text-left py-3 px-4 text-slate-500 font-medium">更正</th>
           <th className="text-left py-3 px-4 text-slate-500 font-medium">状态</th>
         </tr>
       </thead>
       <tbody>
         {publishedItems.length === 0 && (
-          <tr><td colSpan={7} className="text-center py-10 text-slate-400">暂无已发布记录</td></tr>
+          <tr><td colSpan={8} className="text-center py-10 text-slate-400">暂无已发布记录</td></tr>
         )}
         {publishedItems.map((item: PublishItem) => (
           <tr key={item.id} className="border-b border-slate-100">
-            <td className="py-3 px-4 text-slate-700">{item.sectionName}</td>
+            <td className="py-3 px-4 text-slate-700">
+              <div className="flex items-center gap-2">
+                {item.sectionName}
+                {item.pendingVerification && (
+                  <span className="badge-warning flex items-center gap-0.5 text-[10px] py-0.5 px-1.5">
+                    <AlertTriangle className="w-2.5 h-2.5" /> 待核
+                  </span>
+                )}
+              </div>
+            </td>
             <td className="py-3 px-4 text-slate-700">{format(new Date(item.measureDate), 'yyyy-MM-dd')}</td>
             <td className="py-3 px-4 text-slate-700">{item.method === 'point_integration' ? '积点法' : '积深法'}</td>
             <td className="py-3 px-4 text-slate-700">{item.waterLevel?.avgLevel ?? '-'}</td>
@@ -98,6 +108,15 @@ export default function Publish() {
               {item.publishRecord ? format(new Date(item.publishRecord.publishedAt), 'yyyy-MM-dd HH:mm') : '-'}
             </td>
             <td className="py-3 px-4 text-slate-700">{item.publishRecord?.publishedBy ?? '-'}</td>
+            <td className="py-3 px-4">
+              {item.correctionNotes && item.correctionNotes.length > 0 ? (
+                <span className="flex items-center gap-1 text-amber-600 text-xs">
+                  <MessageSquare className="w-3.5 h-3.5" /> {item.correctionNotes.length} 条
+                </span>
+              ) : (
+                <span className="text-slate-400 text-xs">无</span>
+              )}
+            </td>
             <td className="py-3 px-4">
               <span className="badge-published flex items-center gap-1 w-fit">
                 <Lock className="w-3 h-3" /> 已发布

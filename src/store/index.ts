@@ -6,6 +6,7 @@ import type {
   WaterLevel,
   AuditTrail,
   PublishRecord,
+  CorrectionNote,
 } from '../../shared/types'
 
 type Role = 'station' | 'reviewer' | 'duty'
@@ -18,10 +19,19 @@ interface DashboardStats {
   recentTrend: { date: string; count: number }[]
 }
 
+interface ChainLink {
+  id: string
+  status: string
+  measureDate: string
+  isRemeasure: boolean
+}
+
 export interface MeasurementDetail extends Measurement {
   velocityPoints: VelocityPoint[]
   waterLevel: WaterLevel | null
   auditTrails: AuditTrail[]
+  correctionNotes: CorrectionNote[]
+  chain: ChainLink[]
 }
 
 export interface PublishItem extends Measurement {
@@ -29,6 +39,7 @@ export interface PublishItem extends Measurement {
   waterLevel: WaterLevel | null
   sectionName: string
   publishRecord: PublishRecord | null
+  correctionNotes: CorrectionNote[]
 }
 
 export interface ReviewItem extends Measurement {
@@ -74,9 +85,10 @@ interface AppState {
   remeasureMeasurement: (id: string, reason?: string) => Promise<void>
   fetchPublishList: () => Promise<void>
   publishMeasurement: (id: string) => Promise<void>
+  addCorrectionNote: (id: string, content: string) => Promise<void>
   clearError: () => void
   clearCurrentMeasurement: () => void
-}
+})}
 
 export const useStore = create<AppState>((set, get) => ({
   role: 'station',
@@ -267,6 +279,22 @@ export const useStore = create<AppState>((set, get) => ({
       await apiFetch(`/api/publish/${id}`, {
         method: 'POST',
         body: JSON.stringify({ operator: operatorMap[role], operatorRole: role }),
+      })
+      set({ loading: false })
+    } catch (e) {
+      set({ error: (e as Error).message, loading: false })
+      throw e
+    }
+  },
+
+  addCorrectionNote: async (id, content) => {
+    set({ loading: true, error: null })
+    try {
+      const role = get().role
+      const operatorMap: Record<Role, string> = { station: '测站人员', reviewer: '复核员', duty: '值班员' }
+      await apiFetch(`/api/measurements/${id}/corrections`, {
+        method: 'POST',
+        body: JSON.stringify({ content, operator: operatorMap[role], operatorRole: role }),
       })
       set({ loading: false })
     } catch (e) {

@@ -13,6 +13,7 @@ export interface Measurement {
   method: 'point_integration' | 'depth_integration'
   status: 'draft' | 'submitted' | 'approved' | 'rejected' | 'remeasure' | 'published'
   needRemeasure: boolean
+  pendingVerification: boolean
   remeasureFromId: string | null
   remeasureReason: string | null
   createdAt: string
@@ -41,10 +42,19 @@ export interface WaterLevel {
 export interface AuditTrail {
   id: string
   measurementId: string
-  action: 'submit' | 'approve' | 'reject' | 'remeasure' | 'publish'
+  action: 'submit' | 'approve' | 'reject' | 'remeasure' | 'publish' | 'add_correction' | 'mark_pending_verification'
   operator: string
   operatorRole: 'station' | 'reviewer' | 'duty'
   comment: string | null
+  createdAt: string
+}
+
+export interface CorrectionNote {
+  id: string
+  measurementId: string
+  content: string
+  operator: string
+  operatorRole: 'station' | 'reviewer' | 'duty'
   createdAt: string
 }
 
@@ -63,4 +73,5 @@ export interface StoreData {
   waterLevels: WaterLevel[]
   auditTrails: AuditTrail[]
   publishRecords: PublishRecord[]
+  correctionNotes: CorrectionNote[]
 }

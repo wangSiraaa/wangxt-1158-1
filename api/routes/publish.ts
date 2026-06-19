@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express'
 import { readStore, writeStore, genId } from '../database.js'
-import type { Measurement, VelocityPoint, WaterLevel, AuditTrail, PublishRecord } from '../../shared/types.js'
+import type { Measurement, VelocityPoint, WaterLevel, AuditTrail, PublishRecord, CorrectionNote } from '../../shared/types.js'
 
 const router = Router()
 
@@ -13,7 +13,8 @@ router.get('/', async (_req: Request, res: Response): Promise<void> => {
       const wl = store.waterLevels.find((w: WaterLevel) => w.measurementId === m.id)
       const section = store.sections.find(s => s.id === m.sectionId)
       const publishRecord = store.publishRecords.find((pr: PublishRecord) => pr.measurementId === m.id)
-      return { ...m, velocityPoints: vps, waterLevel: wl, sectionName: section?.name ?? '', publishRecord: publishRecord || null }
+      const correctionNotes = store.correctionNotes.filter((cn: CorrectionNote) => cn.measurementId === m.id)
+      return { ...m, velocityPoints: vps, waterLevel: wl, sectionName: section?.name ?? '', publishRecord: publishRecord || null, correctionNotes }
     })
     enriched.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     res.json({ success: true, data: enriched })
